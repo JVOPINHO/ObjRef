@@ -1,7 +1,12 @@
+const setValue = require("./setValue")
+
 module.exports = class ObjRef {
-    constructor(obj) {
+    constructor(obj, sep = "/") {
         if(typeof obj != "object" && obj != undefined) throw new Error("<ObjRef> constructor must be a object.")
         this.obj = obj || criarObj()
+        
+        if(typeof sep != "string" && obj != undefined) throw new Error("<ObjRef> constructor separator must be a string.")
+        this.sep = sep || "/"
     }
     
     ref(path) {
@@ -9,7 +14,7 @@ module.exports = class ObjRef {
         if(!path) path = ""
         return {
             val: () => {
-                let value = refVal(this.obj, path)
+                let value = refVal(this.obj, path, this.sep)
                 return value
             },
 
@@ -17,13 +22,7 @@ module.exports = class ObjRef {
                 if(!path && typeof value != "object") throw new Error("<ObjRef>.ref(...).set() must be a object.")
                 else if(!path && typeof value == "object") return this.obj = value
                 else {
-                    let k = String(path).split("/");
-                    let b = this.obj;
-                    while (k.length > 1) {
-                        const a = k.shift();
-                        b = b[a] = b[a] || {};
-                    }
-                    b[k] = value;
+                    this.obj = setValue(this.obj, path, value, this.sep)
                 
                     return this.obj;
                 }
@@ -37,8 +36,8 @@ function criarObj() {
     return obj
 }
 
-function refVal(obj, string) {
-    let array = string.split("/").filter(x => x)
+function refVal(obj, string, sep = "/") {
+    let array = string.split(sep).filter(x => x)
     let valor = obj;
     for(let element of array.filter(x => x)) {
       if(valor != undefined && valor != null) valor = valor[`${element}`]
