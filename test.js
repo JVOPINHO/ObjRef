@@ -6,6 +6,8 @@ let m = {
 }
 let obj = new ObjRef(m)
 
-let valor = obj.ref("a/b")
+console.log(obj.ref("a/b").val())
 
-console.log(valor)
+obj.ref("a/b").set("b")
+
+console.log(obj.ref("a/b").val())
