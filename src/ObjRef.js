@@ -1,33 +1,44 @@
 const setValue = require("./setValue")
+const { isObject } = require("./Utils")
 
 module.exports = class ObjRef {
     constructor(obj, sep = "/") {
-        if(typeof obj != "object" && obj != undefined) throw new Error("<ObjRef> constructor must be a object.")
-        this.obj = obj || criarObj()
+        if(!isObject(obj) && obj != undefined) throw new Error("<ObjRef> constructor must be a object.")
+        this.obj = new Object(obj) || criarObj()
         
         if(typeof sep != "string" && obj != undefined) throw new Error("<ObjRef> constructor separator must be a string.")
         this.sep = sep || "/"
     }
     
     ref(path) {
-        if(typeof path != "string" && path != undefined) throw new Error("<ObjRef>.ref() must be a string.")
+        if(path && typeof path != "string") throw new Error("<ObjRef>.ref() must be a string.")
         if(!path) path = ""
+
+        let pathValue = refVal(this.obj, path, this.sep)
         return {
             val: () => {
-                let value = refVal(this.obj, path, this.sep)
-                return value
+                return pathValue
             },
-
             set: (value) => {
-                if(!path && typeof value != "object") throw new Error("<ObjRef>.ref(...).set() must be a object.")
-                else if(!path && typeof value == "object") return this.obj = value
+                if(!path && !isObject(value)) throw new Error("<ObjRef>.ref(...).set() must be a object.")
+                else if(!path && isObject(value)) return this.obj = value
                 else {
                     this.obj = setValue(this.obj, path, value, this.sep)
                 
                     return this.obj;
                 }
+            },
+            update: (value) => {
+                if(!isObject(value)) throw new Error("<ObjRef>.ref(...).update() must be a object.")
+                if(!pathValue) return this.obj = setValue(this.obj, path, value, this.sep)
+                if(!isObject(pathValue)) return this.obj = setValue(this.obj, path, value, this.sep)
+                Object.keys(value).forEach((key) => {
+                    this.obj = setValue(this.obj, `${path ? `${path}${this.sep}` : ""}${key}`, value[key], this.sep)
+                })
+
+                return this.obj
             }
-        } 
+        }
     }
 }
 
@@ -40,7 +51,7 @@ function refVal(obj, string, sep = "/") {
     let array = string.split(sep).filter(x => x)
     let valor = obj;
     for(let element of array.filter(x => x)) {
-      if(valor != undefined && valor != null) valor = valor[`${element}`]
+      if(valor) valor = valor[`${element}`]
       else {
         valor = undefined;
         break;
