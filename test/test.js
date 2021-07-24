@@ -10,8 +10,6 @@ let m = {
 
 let obj = new ObjRef(m)
 
-obj.ref("a").update({
-    b: "b" 
-})
+obj.ref().delete()
 
-console.log(m)
+console.log(obj.obj)

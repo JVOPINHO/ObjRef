@@ -22,11 +22,7 @@ module.exports = class ObjRef {
             set: (value) => {
                 if(!path && !isObject(value)) throw new Error("<ObjRef>.ref(...).set() must be a object.")
                 else if(!path && isObject(value)) return this.obj = value
-                else {
-                    this.obj = setValue(this.obj, path, value, this.sep)
-                
-                    return this.obj;
-                }
+                else return this.obj = setValue(this.obj, path, value, this.sep)
             },
             update: (value) => {
                 if(!isObject(value)) throw new Error("<ObjRef>.ref(...).update() must be a object.")
@@ -35,7 +31,17 @@ module.exports = class ObjRef {
                 Object.keys(value).forEach((key) => {
                     this.obj = setValue(this.obj, `${path ? `${path}${this.sep}` : ""}${key}`, value[key], this.sep)
                 })
-
+                return this.obj
+            },
+            delete: () => {
+                if(!path) return this.obj = criarObj()
+                let obj = this.obj
+                let array = path.split(this.sep).filter(x => x)
+                while(array.length > 1) {
+                    let value = array.shift()
+                    obj = obj[value] = obj[value] || criarObj()
+                }
+                delete obj[array]
                 return this.obj
             }
         }
