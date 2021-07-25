@@ -37,11 +37,13 @@ module.exports = class ObjRef {
                 if(!path) return this.obj = criarObj()
                 let obj = this.obj
                 let array = path.split(this.sep).filter(x => x)
-                while(array.length > 1) {
+                let _continue = true
+                while(array.length > 1 && _continue == true) {
                     let value = array.shift()
-                    obj = obj[value] = obj[value] || criarObj()
+                    if(!obj[value]) _continue = false
+                    else obj = obj[value] = obj[value] || criarObj()
                 }
-                delete obj[array]
+                if(_continue == true) delete obj[array]
                 return this.obj
             }
         }

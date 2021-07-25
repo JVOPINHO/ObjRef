@@ -10,6 +10,6 @@ let m = {
 
 let obj = new ObjRef(m)
 
-obj.ref().delete()
+obj.ref("a/b/c/a").delete()
 
 console.log(obj.obj)
