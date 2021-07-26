@@ -14,7 +14,7 @@ module.exports = class ObjRef {
         if(path && typeof path != "string") throw new Error("<ObjRef>.ref() must be a string.")
         if(!path) path = ""
 
-        let pathValue = refVal(this.obj, path, this.sep)
+        const pathValue = refVal(this.obj, path, this.sep)
         return {
             val: () => {
                 return pathValue

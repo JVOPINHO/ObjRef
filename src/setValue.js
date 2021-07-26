@@ -1,10 +1,5 @@
 const { isObject } = require("./Utils")
 
-function isObjectObject(o) {
-  return isObject(o) === true
-    && Object.prototype.toString.call(o) === '[object Object]';
-}
-
 const isUnsafeKey = key => {
   return key === '__proto__' || key === 'constructor' || key === 'prototype';
 };
@@ -17,12 +12,6 @@ const validateKey = key => {
 
 const toString = input => {
   return Array.isArray(input) ? input.flat().map(String).join(',') : input;
-};
-
-const createMemoKey = (input) => {
-  if (typeof input !== 'string') return input;
-  let key = input + ';';
-  return key;
 };
 
 const memoize = (input, fn) => {
