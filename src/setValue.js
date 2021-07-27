@@ -47,11 +47,6 @@ const splitString = (input, sep = "/") => {
     if (typeof keys[i] !== 'string') break;
     const { is, number } = isNumber(keys[i]);
 
-    if (is) {
-      keys[i] = number;
-      continue;
-    }
-
     while (keys[i] && i < keys.length && keys[i].endsWith('\\') && typeof keys[i + 1] === 'string') {
       keys[i] = keys[i].slice(0, -1) + sep + keys.splice(i + 1, 1);
     }
@@ -94,12 +89,6 @@ const setValue = (obj, path, value, sep) => {
     if (next === undefined) {
       setProp(obj, key, value);
       break;
-    }
-
-    if (typeof next === 'number' && !Array.isArray(obj[key])) {
-      obj[key] = [];
-      obj = obj[key];
-      continue;
     }
 
     if (!isObject(obj[key])) {

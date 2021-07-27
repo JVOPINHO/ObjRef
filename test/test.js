@@ -1,15 +1,41 @@
 const ObjRef = require("../src/ObjRef")
-let m = {
-    a: {
-        b: "a"
-    },
-    c: {
-        d: "c"
+const obj_base = {
+    users: {
+        "001": {
+            name: "João Oliveira",
+            nickname: "JVOPINHO",
+            id: "001"
+        },
+        "002": null,
+        "003": {
+            name: "Luiz",
+            nickname: "luizdodibre",
+            id: "003"
+        },
+        "004": {
+            name: "Sayran",
+            nickname: "Polaroo",
+            id: "004"
+        }
     }
 }
+const obj = new ObjRef(obj_base)
 
-let obj = new ObjRef(m)
+console.log("ObjRef val:", obj.ref("users/004").val())
+console.log(" ")
+console.log("ObjRef set:", obj.ref("users/002").set({
+    name: "Bryan",
+    nickname: "TwoNike",
+    id: "002"
+}))
+console.log(" ")
 
-obj.ref("a/b/c/a").delete()
+console.log("ObjRef update:", obj.ref("users/001").update({
+    nickname: "JPinho"
+}))
+console.log(" ")
 
-console.log(obj.obj)
+console.log("ObjRef delete:", obj.ref("users/003").delete())
+console.log(" ")
+
+console.log("Obj:", obj.obj)

@@ -22,16 +22,25 @@ module.exports = class ObjRef {
             set: (value) => {
                 if(!path && !isObject(value)) throw new Error("<ObjRef>.ref(...).set() must be a object.")
                 else if(!path && isObject(value)) return this.obj = value
-                else return this.obj = setValue(this.obj, path, value, this.sep)
+                else {
+                    setValue(this.obj, path, value, this.sep)
+                    return refVal(this.obj, path, this.sep)
+                }
             },
             update: (value) => {
                 if(!isObject(value)) throw new Error("<ObjRef>.ref(...).update() must be a object.")
-                if(!pathValue) return this.obj = setValue(this.obj, path, value, this.sep)
-                if(!isObject(pathValue)) return this.obj = setValue(this.obj, path, value, this.sep)
+                if(!pathValue) {
+                    this.obj = setValue(this.obj, path, value, this.sep)
+                    return refVal(this.obj, path, this.sep)
+                }
+                if(!isObject(pathValue)) {
+                    this.obj = setValue(this.obj, path, value, this.sep)
+                    return refVal(this.obj, path, this.sep)
+                }
                 Object.keys(value).forEach((key) => {
-                    this.obj = setValue(this.obj, `${path ? `${path}${this.sep}` : ""}${key}`, value[key], this.sep)
+                    setValue(this.obj, `${path ? `${path}${this.sep}` : ""}${key}`, value[key], this.sep)
                 })
-                return this.obj
+                return refVal(this.obj, path, this.sep)
             },
             delete: () => {
                 if(!path) return this.obj = criarObj()
