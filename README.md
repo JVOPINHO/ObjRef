@@ -58,7 +58,7 @@
 ```
 
 <h3>Methods</h3>
-<br>
+
 <h4>Val</h4>
 <p>The val method returns the value of the path determined by the reference</p>
 
